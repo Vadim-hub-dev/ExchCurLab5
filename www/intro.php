@@ -7,6 +7,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="./css/styleValid.css">
 	<script src="https://use.fontawesome.com/af06815fdc.js"></script> 
 
     <title>Exchange currency</title>
@@ -16,42 +17,9 @@
   <body>
   
 <?php
-	require "../db.php"; // подключаем файл для соединения с БД
+	require_once "../db.php"; // подключаем файл для соединения с БД
 	session_start();
-	// Создаем переменную для сбора данных от пользователя по методу POST
-
-	/*
-		Если пользователь не авторизован (проверяем по сессии) -
-		тогда проверим его куки, если в куках есть логин и ключ,
-		то пробьем их по базе данных.
-		Если пара логин-ключ подходит - пишем авторизуем пользователя.
-
-		Если пользователь авторизован - ничего не делаем. 
-
-		Если пустая переменная auth из сессии ИЛИ она равна false (для авторизованного она true).
-	*/
-	if (empty($_SESSION['auth']) or $_SESSION['auth'] == false) 
-	{
-		//Проверяем, не пустые ли нужные нам куки...
-		if ( !empty($_COOKIE['login']) and !empty($_COOKIE['key']) ) 
-		{
-			//Пишем логин и ключ из КУК в переменные (для удобства работы):
-			$login = $_COOKIE['login']; 
-			$key = $_COOKIE['key']; //ключ из кук (аналог пароля, в базе поле cookie)
-
-			//Выбираем из таблицы БД строку с нашим логином 
-			$result = mysqli_query($link, "SELECT * FROM users WHERE login='$login' AND cookie='$key' LIMIT 1");
-			$res = mysqli_fetch_array($result);
-
-			//Если база данных вернула не пустой ответ - значит пара логин-ключ к кукам подошла...
-			if (!empty($res)) 
-			{
-				//Пишем в сессию информацию о том, что мы авторизовались:
-				$_SESSION['auth'] = $res['id']; 
-
-			}
-		}
-	}
+	require_once "../phpscripts/autoAthCook.php";
 ?>
   
   <header>
